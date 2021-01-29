@@ -1,0 +1,69 @@
+
+#--
+
+    Keywords:
+    fn const pure impure inline where static
+    let mut
+    if else for in loop match
+    struct interface
+    break continue return
+    panic none pass _ and or
+    init deinit
+
+--#
+
+struct Array[T, const N :: U64]
+{
+    where { N > 0 }
+    {
+
+        inline init[*U](items :: *U)
+            where
+                { *U.len == N },
+                for V in *U
+                {
+                    V == T
+                }
+        {
+            let (head, .. tail) = items
+            self.tail = new Array[T, { N - 1 }](tail)
+        }
+        head :: T
+        tail :: Array[T, { N - 1 }]
+    }
+}
+
+for[T, const N :: U64] Array[T, N]
+{
+    inline fn apply(index :: U64) -> T
+    {
+        if index >= N
+        {
+            panic "Index out of bounds"
+        }
+        else
+        {
+            (self.head& + index)@
+        }
+    }
+
+    inline fn apply=(index :: U64, value :: T) -> T
+    {
+        if index >= N
+        {
+            panic "Index out of bounds"
+        }
+        else
+        {
+            (self.head& + index)@
+        }
+    }
+}
+
+
+fn main()
+{
+    let array = new Array[I32, _](1, 2, 3, 4)
+    let x = array.(2)
+    Core.IO.stdout().write_line(x)
+}
